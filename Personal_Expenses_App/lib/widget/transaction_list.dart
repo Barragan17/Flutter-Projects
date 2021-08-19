@@ -29,7 +29,7 @@ class TransactionList extends StatelessWidget {
                   padding: EdgeInsets.fromLTRB(5, 10, 5, 10),
                   child: Text(
                     // String Interpolation
-                    'Rp${_userTransaction[index].amount}',
+                    'Rp${_userTransaction[index].amount.toStringAsFixed(0)}',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 10,
