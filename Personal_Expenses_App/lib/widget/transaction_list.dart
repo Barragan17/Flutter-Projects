@@ -9,56 +9,76 @@ class TransactionList extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: 200,
-      child: ListView.builder(
-        itemBuilder: (ctx, index) {
-          return Card(
-            child: Row(
+      child: _userTransaction.isEmpty
+          ? Column(
               children: [
+                Text(
+                  'No Transaction Added Yet',
+                  style: Theme.of(context).textTheme.title,
+                ),
+                SizedBox(
+                  height: 10,
+                ),
                 Container(
-                  margin: EdgeInsets.symmetric(
-                    vertical: 10,
-                    horizontal: 15,
-                  ),
-                  width: 80,
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                      color: Theme.of(context).primaryColor,
-                      width: 2,
-                    ),
-                  ),
-                  padding: EdgeInsets.fromLTRB(5, 10, 5, 10),
-                  child: Text(
-                    // String Interpolation
-                    'Rp${_userTransaction[index].amount.toStringAsFixed(0)}',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 10,
-                      color: Theme.of(context).primaryColor,
-                    ),
-                    textAlign: TextAlign.center,
+                  height: 100,
+                  child: Image.asset(
+                    'assets/image/waiting.png',
+                    fit: BoxFit.cover,
                   ),
                 ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      _userTransaction[index].title,
-                      style: Theme.of(context).textTheme.title,
-                    ),
-                    Text(
-                      DateFormat.yMMMMd().format(_userTransaction[index].date),
-                      style: TextStyle(
-                        color: Colors.grey,
-                      ),
-                    ),
-                  ],
-                )
               ],
+            )
+          : ListView.builder(
+              itemBuilder: (ctx, index) {
+                return Card(
+                  child: Row(
+                    children: [
+                      Container(
+                        margin: EdgeInsets.symmetric(
+                          vertical: 10,
+                          horizontal: 15,
+                        ),
+                        width: 80,
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: Theme.of(context).primaryColor,
+                            width: 2,
+                          ),
+                        ),
+                        padding: EdgeInsets.fromLTRB(5, 10, 5, 10),
+                        child: Text(
+                          // String Interpolation
+                          'Rp${_userTransaction[index].amount.toStringAsFixed(0)}',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 10,
+                            color: Theme.of(context).primaryColor,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            _userTransaction[index].title,
+                            style: Theme.of(context).textTheme.title,
+                          ),
+                          Text(
+                            DateFormat.yMMMMd()
+                                .format(_userTransaction[index].date),
+                            style: TextStyle(
+                              color: Colors.grey,
+                            ),
+                          ),
+                        ],
+                      )
+                    ],
+                  ),
+                );
+              },
+              itemCount: _userTransaction.length,
             ),
-          );
-        },
-        itemCount: _userTransaction.length,
-      ),
     );
   }
 }
