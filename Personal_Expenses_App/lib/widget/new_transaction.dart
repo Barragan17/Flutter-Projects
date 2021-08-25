@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class NewTransaction extends StatefulWidget {
   final Function buttonHandler;
@@ -10,8 +11,8 @@ class NewTransaction extends StatefulWidget {
 
 class _NewTransactionState extends State<NewTransaction> {
   final titleController = TextEditingController();
-
   final amountController = TextEditingController();
+  DateTime? _datePicked;
 
   void submitData() {
     final enteredTitle = titleController.text;
@@ -27,6 +28,22 @@ class _NewTransactionState extends State<NewTransaction> {
     );
 
     Navigator.of(context).pop();
+  }
+
+  void _showDatePicker() {
+    showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2021),
+      lastDate: DateTime.now(),
+    ).then((selectedDate) {
+      if (selectedDate == null) {
+        return;
+      }
+      setState(() {
+        _datePicked = selectedDate;
+      });
+    });
   }
 
   @override
@@ -53,10 +70,30 @@ class _NewTransactionState extends State<NewTransaction> {
               onSubmitted: (_) => submitData(),
               // onChanged: (val) => amountInput = val,
             ),
-            FlatButton(
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    _datePicked == null
+                        ? 'No Date Choosen'
+                        : 'Picked Date ${DateFormat.yMd().format(_datePicked!)}',
+                  ),
+                ),
+                FlatButton(
+                  onPressed: _showDatePicker,
+                  child: Text(
+                    'Choose Date',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  textColor: Theme.of(context).primaryColor,
+                ),
+              ],
+            ),
+            RaisedButton(
               onPressed: submitData,
               child: Text('Add Transaction'),
-              textColor: Colors.purple,
+              color: Theme.of(context).primaryColor,
+              textColor: Theme.of(context).textTheme.button?.color,
             )
           ],
         ),
