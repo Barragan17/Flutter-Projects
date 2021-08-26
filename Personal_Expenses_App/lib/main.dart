@@ -2,9 +2,17 @@ import 'package:Personal_Expenses_App/widget/chart.dart';
 import 'package:Personal_Expenses_App/widget/new_transaction.dart';
 import 'package:Personal_Expenses_App/widget/transaction_list.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import './model/transaction.dart';
 
 void main() {
+  // Use this line to restrict landscape mode
+
+  // WidgetsFlutterBinding.ensureInitialized();
+  // SystemChrome.setPreferredOrientations([
+  //   DeviceOrientation.portraitUp,
+  //   DeviceOrientation.portraitDown,
+  // ]);
   runApp(MyApp());
 }
 
@@ -87,6 +95,8 @@ class _MyHomePageState extends State<MyHomePage> {
     }).toList();
   }
 
+  bool _switchStatus = false;
+
   void _addNewTransaction(
       String txTitle, double txAmount, DateTime transactionsDate) {
     final newTx = Transaction(
@@ -121,25 +131,54 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final appBar = AppBar(
+      title: Text('Personal Expenses App'),
+      actions: [
+        IconButton(
+          onPressed: () {
+            _startAddNewTransaction(context);
+          },
+          icon: Icon(Icons.add),
+        ),
+      ],
+    );
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Personal Expenses App'),
-        actions: [
-          IconButton(
-            onPressed: () {
-              _startAddNewTransaction(context);
-            },
-            icon: Icon(Icons.add),
-          ),
-        ],
-      ),
+      appBar: appBar,
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           // mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            Chart(_recentTransactions),
-            TransactionList(_userTransaction, _deleteTransactions),
+            // use this line to set the height dynamically according to the phone's size
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text('Show Chart'),
+                Switch(
+                  value: _switchStatus,
+                  onChanged: (val) {
+                    setState(() {
+                      _switchStatus = val;
+                    });
+                  },
+                ),
+              ],
+            ),
+            // use if statement to set which content to be shown
+            _switchStatus
+                ? Container(
+                    height: MediaQuery.of(context).size.height * 0.7 -
+                        appBar.preferredSize.height -
+                        MediaQuery.of(context).padding.top,
+                    child: Chart(_recentTransactions),
+                  )
+                // set the height amount to 1.0 in total
+                : Container(
+                    height: MediaQuery.of(context).size.height * 0.75 -
+                        appBar.preferredSize.height -
+                        MediaQuery.of(context).padding.top,
+                    child:
+                        TransactionList(_userTransaction, _deleteTransactions)),
           ],
         ),
       ),
