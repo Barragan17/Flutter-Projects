@@ -1,6 +1,8 @@
+import 'dart:io';
 import 'package:Personal_Expenses_App/widget/chart.dart';
 import 'package:Personal_Expenses_App/widget/new_transaction.dart';
 import 'package:Personal_Expenses_App/widget/transaction_list.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import './model/transaction.dart';
@@ -131,64 +133,114 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final appBar = AppBar(
-      title: Text('Personal Expenses App'),
-      actions: [
-        IconButton(
-          onPressed: () {
-            _startAddNewTransaction(context);
-          },
-          icon: Icon(Icons.add),
-        ),
-      ],
+    final mediaQuery = MediaQuery.of(context);
+    final isLandscape = mediaQuery.orientation == Orientation.landscape;
+
+    final PreferredSizeWidget appBar = Platform.isIOS
+        // use cupertino in order to set the ios app bar theme
+        ? CupertinoNavigationBar(
+            middle: Text('Personal Expenses'),
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                GestureDetector(
+                  child: Icon(CupertinoIcons.add),
+                  onTap: () => _startAddNewTransaction(context),
+                )
+              ],
+            ),
+          )
+        : AppBar(
+            title: Text('Personal Expenses App'),
+            actions: [
+              IconButton(
+                onPressed: () {
+                  _startAddNewTransaction(context);
+                },
+                icon: Icon(Icons.add),
+              ),
+            ],
+          ) as PreferredSizeWidget;
+    final transactionsList = Container(
+      height: mediaQuery.size.height * 0.75 -
+          appBar.preferredSize.height -
+          mediaQuery.padding.top,
+      child: TransactionList(_userTransaction, _deleteTransactions),
     );
-    return Scaffold(
-      appBar: appBar,
-      body: SingleChildScrollView(
+    // use safe area to move the widget so that it didn't use the reserved space (in IOS)
+    final pageBody = SafeArea(
+      child: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           // mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             // use this line to set the height dynamically according to the phone's size
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text('Show Chart'),
-                Switch(
-                  value: _switchStatus,
-                  onChanged: (val) {
-                    setState(() {
-                      _switchStatus = val;
-                    });
-                  },
-                ),
-              ],
-            ),
+            // use if statement to set a different content based on it's orientation
+
+            if (isLandscape)
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Show Chart',
+                    style: Theme.of(context).textTheme.title,
+                  ),
+                  // use adaptive so it can change the switch based on the user plattform device
+                  Switch.adaptive(
+                    activeColor: Theme.of(context).accentColor,
+                    value: _switchStatus,
+                    onChanged: (val) {
+                      setState(() {
+                        _switchStatus = val;
+                      });
+                    },
+                  ),
+                ],
+              ),
+            if (!isLandscape)
+              Container(
+                height: mediaQuery.size.height * 0.4 -
+                    appBar.preferredSize.height -
+                    mediaQuery.padding.top,
+                child: Chart(_recentTransactions),
+              ),
+            if (!isLandscape) transactionsList,
             // use if statement to set which content to be shown
-            _switchStatus
-                ? Container(
-                    height: MediaQuery.of(context).size.height * 0.7 -
-                        appBar.preferredSize.height -
-                        MediaQuery.of(context).padding.top,
-                    child: Chart(_recentTransactions),
-                  )
-                // set the height amount to 1.0 in total
-                : Container(
-                    height: MediaQuery.of(context).size.height * 0.75 -
-                        appBar.preferredSize.height -
-                        MediaQuery.of(context).padding.top,
-                    child:
-                        TransactionList(_userTransaction, _deleteTransactions)),
+            // also use if statement to change the content
+            if (isLandscape)
+              _switchStatus
+                  ? Container(
+                      height: mediaQuery.size.height * 0.7 -
+                          appBar.preferredSize.height -
+                          mediaQuery.padding.top,
+                      child: Chart(_recentTransactions),
+                    )
+                  // set the height amount to 1.0 in total
+                  : transactionsList
           ],
         ),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.add),
-        onPressed: () {
-          _startAddNewTransaction(context);
-        },
-      ),
     );
+
+    return Platform.isIOS
+        ? CupertinoPageScaffold(
+            child: pageBody,
+            navigationBar: appBar as ObstructingPreferredSizeWidget,
+          )
+        : Scaffold(
+            appBar: appBar,
+            body: pageBody,
+            floatingActionButtonLocation:
+                FloatingActionButtonLocation.centerFloat,
+            // to check if the platform use ios
+            floatingActionButton: Platform.isIOS
+                ? Container()
+                : FloatingActionButton(
+                    child: Icon(Icons.add),
+                    onPressed: () {
+                      _startAddNewTransaction(context);
+                    },
+                  ),
+          );
   }
 }

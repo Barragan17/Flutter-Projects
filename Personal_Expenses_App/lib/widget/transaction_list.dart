@@ -10,6 +10,7 @@ class TransactionList extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       child: _userTransaction.isEmpty
+          // use layout builder to set the height dynamincally according to the widget's custom height
           ? LayoutBuilder(builder: (ctx, constraint) {
               return Column(
                 children: [
@@ -64,12 +65,20 @@ class TransactionList extends StatelessWidget {
                     subtitle: Text(
                       DateFormat.yMMMd().format(_userTransaction[index].date),
                     ),
-                    trailing: IconButton(
-                      icon: Icon(Icons.delete),
-                      color: Theme.of(context).errorColor,
-                      onPressed: () =>
-                          _deleteTransactions(_userTransaction[index].id),
-                    ),
+                    trailing: MediaQuery.of(context).size.width > 460
+                        ? FlatButton.icon(
+                            onPressed: () =>
+                                _deleteTransactions(_userTransaction[index].id),
+                            icon: Icon(Icons.delete),
+                            label: Text('Delete'),
+                            textColor: Theme.of(context).errorColor,
+                          )
+                        : IconButton(
+                            icon: Icon(Icons.delete),
+                            color: Theme.of(context).errorColor,
+                            onPressed: () =>
+                                _deleteTransactions(_userTransaction[index].id),
+                          ),
                   ),
                 );
                 // return Card(
