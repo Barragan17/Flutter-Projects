@@ -111,12 +111,32 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() {
       _userTransaction.add(newTx);
     });
+
+    final newSnackBar = SnackBar(
+      content: Text('Successfully created a new transactions'),
+      backgroundColor: Colors.green,
+      action: SnackBarAction(
+        label: 'Close',
+        onPressed: () {},
+      ),
+    );
+    ScaffoldMessenger.of(context).showSnackBar(newSnackBar);
   }
 
   void _deleteTransactions(String id) {
     setState(() {
       _userTransaction.removeWhere((tx) => tx.id == id);
     });
+
+    final deleteSnackBar = SnackBar(
+      content: Text('Succesfully delete a transactions'),
+      backgroundColor: Colors.red,
+      action: SnackBarAction(
+        label: 'Close',
+        onPressed: () {},
+      ),
+    );
+    ScaffoldMessenger.of(context).showSnackBar(deleteSnackBar);
   }
 
   void _startAddNewTransaction(BuildContext ctx) {
