@@ -1,6 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:meals_app/screen/filters_screen.dart';
 import 'package:meals_app/screen/meal_detail_screen.dart';
+import 'package:meals_app/screen/tabs_screen.dart';
 import '../screen/categories_screen.dart';
 import '../screen/category_meals_screen.dart';
 
@@ -15,7 +17,7 @@ class MyApp extends StatelessWidget {
       title: 'Delimeals',
       theme: ThemeData(
         primarySwatch: Colors.blue,
-        accentColor: Colors.blueAccent,
+        accentColor: Colors.indigo,
         canvasColor: Color.fromRGBO(255, 254, 229, 1),
         fontFamily: 'Raleway',
         textTheme: ThemeData.light().textTheme.copyWith(
@@ -34,9 +36,10 @@ class MyApp extends StatelessWidget {
       ),
       // home: CategoriesScreen(),
       routes: {
-        '/': (ctx) => CategoriesScreen(),
+        '/': (ctx) => TabsScreen(),
         CategoryMealsScreen.routeName: (ctx) => CategoryMealsScreen(),
         MealDetailScreen.routeName: (ctx) => MealDetailScreen(),
+        FiltersScreen.routeName: (ctx) => FiltersScreen(),
       },
       // use onGenerateRoute if the app can't find any named route (could come in handy when you build dynamic link applications)
       onGenerateRoute: (settings) {
