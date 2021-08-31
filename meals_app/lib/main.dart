@@ -1,7 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:meals_app/categories_screen.dart';
-import 'package:meals_app/category_meals_screen.dart';
+import 'package:meals_app/screen/meal_detail_screen.dart';
+import '../screen/categories_screen.dart';
+import '../screen/category_meals_screen.dart';
 
 void main() {
   runApp(MyApp());
@@ -31,9 +32,19 @@ class MyApp extends StatelessWidget {
               ),
             ),
       ),
-      home: CategoriesScreen(),
+      // home: CategoriesScreen(),
       routes: {
-        '/category-meals': (ctx) => CategoryMealsScreen(),
+        '/': (ctx) => CategoriesScreen(),
+        CategoryMealsScreen.routeName: (ctx) => CategoryMealsScreen(),
+        MealDetailScreen.routeName: (ctx) => MealDetailScreen(),
+      },
+      // use onGenerateRoute if the app can't find any named route (could come in handy when you build dynamic link applications)
+      onGenerateRoute: (settings) {
+        print(settings.arguments);
+      },
+      // use onUnknownRoute as the last resource if the app can't find any named route and onGenerateRoute doesn't exist
+      onUnknownRoute: (settings) {
+        return MaterialPageRoute(builder: (ctx) => CategoriesScreen());
       },
     );
   }
