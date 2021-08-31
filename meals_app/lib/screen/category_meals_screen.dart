@@ -1,26 +1,54 @@
 import 'package:flutter/material.dart';
+import 'package:meals_app/model/meal.dart';
 import 'package:meals_app/widget/meals_item.dart';
 import '../dummy_data.dart';
 
-class CategoryMealsScreen extends StatelessWidget {
+class CategoryMealScreen extends StatefulWidget {
   static const String routeName = '/category-meals';
-  // final String categoryId;
-  // final String categoryTitle;
 
-  // CategoryMealsScreen(this.categoryId, this.categoryTitle);
+  @override
+  _categoryMealScreenState createState() => _categoryMealScreenState();
+}
 
-  // we don't need the constructor anymore since we use the named routes
+class _categoryMealScreenState extends State<CategoryMealScreen> {
+  String? categoryTitle;
+  List<Meal>? displayedMeal;
+  var _isInitial = false;
+
+  @override
+  // initialize everything using initstate
+  // initstate runs too early, thus cannot create route data
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  // run whenever the dependencies change, it will be triggered whenever the reference of the state changed not like initstate
+  void didChangeDependencies() {
+    if (!_isInitial) {
+      final routeArgs =
+          ModalRoute.of(context)!.settings.arguments as Map<String, String>;
+      categoryTitle = routeArgs['title'];
+      final categoryId = routeArgs['id'];
+      // use this to create filtered list based on the categories
+      displayedMeal = DUMMY_MEALS.where((meal) {
+        return meal.categories.contains(categoryId);
+      }).toList();
+      _isInitial = true;
+    }
+    super.didChangeDependencies();
+  }
+
+  void _removeMeal(String mealId) {
+    setState(() {
+      displayedMeal!.removeWhere((meal) => meal.id == mealId);
+      print('Meal ID: $mealId');
+      print('true');
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    final routeArgs =
-        ModalRoute.of(context)!.settings.arguments as Map<String, String>;
-    final categoryTitle = routeArgs['title'];
-    final categoryId = routeArgs['id'];
-    // use this to create filtered list based on the categories
-    final categoryMeals = DUMMY_MEALS.where((meal) {
-      return meal.categories.contains(categoryId);
-    }).toList();
     return Scaffold(
       appBar: AppBar(
         title: Text(categoryTitle!),
@@ -28,14 +56,16 @@ class CategoryMealsScreen extends StatelessWidget {
       body: ListView.builder(
         itemBuilder: (ctx, index) {
           return MealsItem(
-              id: categoryMeals[index].id,
-              title: categoryMeals[index].title,
-              imageUrl: categoryMeals[index].imageUrl,
-              duration: categoryMeals[index].duration,
-              complexity: categoryMeals[index].complexity,
-              affordability: categoryMeals[index].affordability);
+            id: displayedMeal![index].id,
+            title: displayedMeal![index].title,
+            imageUrl: displayedMeal![index].imageUrl,
+            duration: displayedMeal![index].duration,
+            complexity: displayedMeal![index].complexity,
+            affordability: displayedMeal![index].affordability,
+            removeItem: _removeMeal,
+          );
         },
-        itemCount: categoryMeals.length,
+        itemCount: displayedMeal!.length,
       ),
     );
   }

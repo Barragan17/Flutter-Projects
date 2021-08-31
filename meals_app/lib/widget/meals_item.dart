@@ -9,6 +9,7 @@ class MealsItem extends StatelessWidget {
   final int duration;
   final Complexity complexity;
   final Affordability affordability;
+  final Function removeItem;
 
   MealsItem(
       {required this.id,
@@ -16,7 +17,8 @@ class MealsItem extends StatelessWidget {
       required this.imageUrl,
       required this.duration,
       required this.complexity,
-      required this.affordability});
+      required this.affordability,
+      required this.removeItem});
 
   // use getter as a variable but able to return something just like functions
   String get complexityText {
@@ -55,7 +57,13 @@ class MealsItem extends StatelessWidget {
     Navigator.of(ctx).pushNamed(
       MealDetailScreen.routeName,
       arguments: {'id': id},
-    );
+    ).then((result) {
+      // this then result will be triggered once the detai page is popped
+      if (result != null) {
+        removeItem(result);
+      }
+      print(result);
+    });
   }
 
   @override
