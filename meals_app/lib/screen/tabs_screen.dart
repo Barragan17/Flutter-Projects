@@ -14,10 +14,11 @@ class TabsScreen extends StatefulWidget {
 
 class _TabsScreenState extends State<TabsScreen> {
   // use list of map to change the screen and the title dynamically
-  List<Map<String, Object>>? _pages;
+  List<Map<String, Object>> _pages = [];
   int _selectedPageIndex = 0;
 
-  void initStates() {
+  @override
+  void initState() {
     _pages = [
       {
         'pages': CategoriesScreen(),
@@ -25,7 +26,7 @@ class _TabsScreenState extends State<TabsScreen> {
       },
       {
         'pages': FavoritesScreen(widget.favoriteMeals),
-        'title': 'Favorite',
+        'title': 'Favorites',
       }
     ];
     super.initState();
@@ -41,10 +42,10 @@ class _TabsScreenState extends State<TabsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(_pages?[_selectedPageIndex]['title'] as String),
+        title: Text(_pages[_selectedPageIndex]['title'] as String),
       ),
       drawer: MainDrawer(),
-      body: _pages?[_selectedPageIndex]['pages'] as Widget,
+      body: _pages[_selectedPageIndex]['pages'] as Widget,
       bottomNavigationBar: BottomNavigationBar(
         // onTap automatically give index into _selectPage method
         onTap: _selectPage,
