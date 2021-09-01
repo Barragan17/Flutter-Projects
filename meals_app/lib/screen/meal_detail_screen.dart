@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:meals_app/dummy_data.dart';
+import 'package:meals_app/model/meal.dart';
 
 class MealDetailScreen extends StatelessWidget {
   static const routeName = '/meal-detail';
+
+  final Function toggleFunction;
+  final Function isMealFavorite;
+
+  MealDetailScreen(this.toggleFunction, this.isMealFavorite);
 
   Widget buildSectionTitle(BuildContext ctx, String text) {
     return Container(
@@ -93,14 +99,20 @@ class MealDetailScreen extends StatelessWidget {
           ],
         ),
       ),
+      // floatingActionButton: FloatingActionButton(
+      //   child: Icon(
+      //     Icons.delete,
+      //   ),
+      //   onPressed: () {
+      //     // use pop to destory the current page and go back to the previous page
+      //     Navigator.of(context).pop(id);
+      //   },
+      // ),
       floatingActionButton: FloatingActionButton(
         child: Icon(
-          Icons.delete,
+          isMealFavorite(id) ? Icons.star : Icons.star_border,
         ),
-        onPressed: () {
-          // use pop to destory the current page and go back to the previous page
-          Navigator.of(context).pop(id);
-        },
+        onPressed: () => toggleFunction(id),
       ),
     );
   }
